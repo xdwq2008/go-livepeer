@@ -51,7 +51,7 @@ func TestPush_ShouldReturn422ForNonRetryable(t *testing.T) {
 	s, cancel := setupServerWithCancel()
 	defer serverCleanup(s)
 	defer cancel()
-	reader := strings.NewReader("InsteadOf.TS")
+	reader := bytes.NewReader(core.TestSegment_H264)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/live/mani/18.ts", reader)
 

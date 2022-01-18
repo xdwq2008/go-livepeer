@@ -467,7 +467,7 @@ func streamParams(d stream.AppData) *core.StreamParameters {
 func gotRTMPStreamHandler(s *LivepeerServer) func(url *url.URL, rtmpStrm stream.RTMPVideoStream) (err error) {
 	return func(url *url.URL, rtmpStrm stream.RTMPVideoStream) (err error) {
 
-		cxn, err := s.registerConnection(context.Background(), rtmpStrm)
+		cxn, err := s.registerConnection(context.Background(), rtmpStrm, nil)
 		if err != nil {
 			return err
 		}
@@ -534,7 +534,7 @@ func endRTMPStreamHandler(s *LivepeerServer) func(url *url.URL, rtmpStrm stream.
 	}
 }
 
-func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream.RTMPVideoStream) (*rtmpConnection, error) {
+func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream.RTMPVideoStream, actualStreamCodec * ffmpeg.VideoCodec) (*rtmpConnection, error) {
 	ctx = clog.Clone(context.Background(), ctx)
 	// Set up the connection tracking
 	params := streamParams(rtmpStrm.AppData())
@@ -556,6 +556,10 @@ func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream
 	storage := params.OS
 
 	// Generate and set capabilities
+	if actualStreamCodec!=nil {
+		params.Codec = *actualStreamCodec
+	}
+
 	caps, err := core.JobCapabilities(params)
 	if err != nil {
 		return nil, err
@@ -836,6 +840,27 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 		ctx = clog.AddNonce(ctx, cxn.nonce)
 	}
 
+	isZeroFrame, _, vcodec_str, err := ffmpeg.GetCodecInfoBytes(body)
+	if err != nil {
+		httpErr := fmt.Sprintf("Couldn't read stream data url=%s", r.URL)
+		glog.Error(httpErr)
+		http.Error(w, httpErr, http.StatusUnprocessableEntity)
+		return
+	}
+	if len(vcodec_str)==0 {
+		httpErr := "Couldn't detect input video stream codec"
+		glog.Error(httpErr)
+		http.Error(w, httpErr, http.StatusUnprocessableEntity)
+		return
+	}
+	vcodec, ok := ffmpeg.FfmpegNameToVideoCodec[vcodec_str]
+	if !ok {
+		httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodec_str)
+		glog.Error(httpErr)
+		http.Error(w, httpErr, http.StatusUnprocessableEntity)
+		return
+	}
+
 	// Check for presence and register if a fresh cxn
 	if !exists {
 		appData := (createRTMPStreamIDHandler(ctx, s))(r.URL)
@@ -877,7 +902,7 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		cxn, err = s.registerConnection(ctx, st)
+		cxn, err = s.registerConnection(ctx, st, &vcodec)
 		if err != nil {
 			st.Close()
 			if err != errAlreadyExists {
@@ -944,6 +969,7 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 		Name:     fname,
 		SeqNo:    seq,
 		Duration: float64(duration) / 1000.0,
+		IsZeroFrame: isZeroFrame,
 	}
 
 	// Kick watchdog periodically so session doesn't time out during long transcodes
