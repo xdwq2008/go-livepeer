@@ -847,18 +847,20 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, httpErr, http.StatusUnprocessableEntity)
 		return
 	}
+
+	var vcodec *ffmpeg.VideoCodec = nil
 	if len(vcodec_str)==0 {
-		httpErr := "Couldn't detect input video stream codec"
-		glog.Error(httpErr)
-		http.Error(w, httpErr, http.StatusUnprocessableEntity)
-		return
-	}
-	vcodec, ok := ffmpeg.FfmpegNameToVideoCodec[vcodec_str]
-	if !ok {
-		httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodec_str)
-		glog.Error(httpErr)
-		http.Error(w, httpErr, http.StatusUnprocessableEntity)
-		return
+		glog.Warning("Couldn't detect input video stream codec")
+	} else
+	{
+		vcodec_val, ok := ffmpeg.FfmpegNameToVideoCodec[vcodec_str]
+		vcodec = &vcodec_val
+		if !ok {
+			httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodec_str)
+			glog.Error(httpErr)
+			http.Error(w, httpErr, http.StatusUnprocessableEntity)
+			return
+		}
 	}
 
 	// Check for presence and register if a fresh cxn
@@ -902,7 +904,7 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		cxn, err = s.registerConnection(ctx, st, &vcodec)
+		cxn, err = s.registerConnection(ctx, st, vcodec)
 		if err != nil {
 			st.Close()
 			if err != errAlreadyExists {

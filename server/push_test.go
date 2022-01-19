@@ -51,7 +51,9 @@ func TestPush_ShouldReturn422ForNonRetryable(t *testing.T) {
 	s, cancel := setupServerWithCancel()
 	defer serverCleanup(s)
 	defer cancel()
-	reader := bytes.NewReader(core.TestSegment_H264)
+
+	d, _ := ioutil.ReadFile("./test.flv")
+	reader := bytes.NewReader(d)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/live/mani/18.ts", reader)
 
@@ -117,6 +119,7 @@ func TestPush_ShouldReturn422ForNonRetryable(t *testing.T) {
 	buf, err = proto.Marshal(tr)
 	require.Nil(t, err)
 	w = httptest.NewRecorder()
+	reader = bytes.NewReader(d)
 	req = httptest.NewRequest("POST", "/live/mani/18.ts", reader)
 	req.Header.Set("Accept", "multipart/mixed")
 	s.HandlePush(w, req)
@@ -135,6 +138,7 @@ func TestPush_ShouldReturn422ForNonRetryable(t *testing.T) {
 	buf, err = proto.Marshal(tr)
 	require.Nil(t, err)
 	w = httptest.NewRecorder()
+	reader = bytes.NewReader(d)
 	req = httptest.NewRequest("POST", "/live/mani/18.ts", reader)
 	req.Header.Set("Accept", "multipart/mixed")
 	s.HandlePush(w, req)
@@ -1457,7 +1461,7 @@ func TestPush_ReuseIntmidWithDiffExtmid(t *testing.T) {
 	defer goleak.VerifyNone(t, common.IgnoreRoutines()...)
 	core.JsonPlaylistQuitTimeout = 0 * time.Second
 
-	reader := strings.NewReader("InsteadOf.TS")
+	reader := strings.NewReader("setupServerWithCancel()")
 	oldRI := httpPushTimeout
 	httpPushTimeout = 100 * time.Millisecond
 	defer func() { httpPushTimeout = oldRI }()
