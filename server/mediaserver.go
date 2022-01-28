@@ -534,7 +534,7 @@ func endRTMPStreamHandler(s *LivepeerServer) func(url *url.URL, rtmpStrm stream.
 	}
 }
 
-func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream.RTMPVideoStream, actualStreamCodec * ffmpeg.VideoCodec) (*rtmpConnection, error) {
+func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream.RTMPVideoStream, actualStreamCodec *ffmpeg.VideoCodec) (*rtmpConnection, error) {
 	ctx = clog.Clone(context.Background(), ctx)
 	// Set up the connection tracking
 	params := streamParams(rtmpStrm.AppData())
@@ -556,7 +556,7 @@ func (s *LivepeerServer) registerConnection(ctx context.Context, rtmpStrm stream
 	storage := params.OS
 
 	// Generate and set capabilities
-	if actualStreamCodec!=nil {
+	if actualStreamCodec != nil {
 		params.Codec = *actualStreamCodec
 	}
 
@@ -849,10 +849,9 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var vcodec *ffmpeg.VideoCodec = nil
-	if len(vcodec_str)==0 {
+	if len(vcodec_str) == 0 {
 		glog.Warning("Couldn't detect input video stream codec")
-	} else
-	{
+	} else {
 		vcodec_val, ok := ffmpeg.FfmpegNameToVideoCodec[vcodec_str]
 		vcodec = &vcodec_val
 		if !ok {
@@ -967,10 +966,10 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 	}
 
 	seg := &stream.HLSSegment{
-		Data:     body,
-		Name:     fname,
-		SeqNo:    seq,
-		Duration: float64(duration) / 1000.0,
+		Data:        body,
+		Name:        fname,
+		SeqNo:       seq,
+		Duration:    float64(duration) / 1000.0,
 		IsZeroFrame: isZeroFrame,
 	}
 
