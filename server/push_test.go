@@ -1461,7 +1461,7 @@ func TestPush_ReuseIntmidWithDiffExtmid(t *testing.T) {
 	defer goleak.VerifyNone(t, common.IgnoreRoutines()...)
 	core.JsonPlaylistQuitTimeout = 0 * time.Second
 
-	reader := strings.NewReader("setupServerWithCancel()")
+	reader := strings.NewReader("InsteadOf.TS")
 	oldRI := httpPushTimeout
 	httpPushTimeout = 100 * time.Millisecond
 	defer func() { httpPushTimeout = oldRI }()
