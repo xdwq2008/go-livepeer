@@ -160,7 +160,7 @@ func TestTranscoderCapabilities(devices []string) (caps []Capability, fatalError
 			}
 		}
 		caps = append(caps, c)
-		test_fail:
+	test_fail:
 	}
 	for _, defCap := range DefaultCapabilities() {
 		found := false

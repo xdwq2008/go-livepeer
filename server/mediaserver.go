@@ -852,8 +852,8 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 	if len(vcodecStr) == 0 {
 		clog.Warningf(ctx, "Couldn't detect input video stream codec")
 	} else {
-		vcodec_val, ok := ffmpeg.FfmpegNameToVideoCodec[vcodecStr]
-		vcodec = &vcodec_val
+		vcodecVal, ok := ffmpeg.FfmpegNameToVideoCodec[vcodecStr]
+		vcodec = &vcodecVal
 		if !ok {
 			httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodecStr)
 			clog.Errorf(ctx, httpErr)

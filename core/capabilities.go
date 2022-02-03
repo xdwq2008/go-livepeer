@@ -18,7 +18,7 @@ type Capabilities struct {
 }
 type CapabilityTest struct {
 	inVideoData []byte
-	outProfile ffmpeg.VideoProfile
+	outProfile  ffmpeg.VideoProfile
 }
 
 // Do not rearrange these values! Only append.
@@ -48,7 +48,6 @@ const (
 	Capability_VP9_Encode
 )
 
-
 var CapabilityTestLookup = map[Capability]CapabilityTest{
 	Capability_H264: {
 		inVideoData: TestSegment_H264,
@@ -56,7 +55,7 @@ var CapabilityTestLookup = map[Capability]CapabilityTest{
 	},
 	Capability_HEVC_Decode: {
 		inVideoData: testSegment_HEVC,
-		outProfile: ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
+		outProfile:  ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
 	},
 	Capability_HEVC_Encode: {
 		inVideoData: TestSegment_H264,
@@ -64,11 +63,11 @@ var CapabilityTestLookup = map[Capability]CapabilityTest{
 	},
 	Capability_VP8_Decode: {
 		inVideoData: testSegment_VP8,
-		outProfile: ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
+		outProfile:  ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
 	},
 	Capability_VP9_Decode: {
 		inVideoData: testSegment_VP9,
-		outProfile: ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
+		outProfile:  ffmpeg.VideoProfile{Resolution: "145x145", Bitrate: "1000k", Format: ffmpeg.FormatMPEGTS},
 	},
 }
 

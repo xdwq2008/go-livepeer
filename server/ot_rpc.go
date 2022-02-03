@@ -156,7 +156,7 @@ func runTranscode(n *core.LivepeerNode, orchAddr string, httpc *http.Client, not
 	}
 	ctx = clog.AddSeqNo(ctx, uint64(md.Seq))
 	ctx = clog.AddVal(ctx, "taskId", strconv.FormatInt(notify.TaskId, 10))
-	if n.Capabilities!=nil && !md.Caps.CompatibleWith(n.Capabilities.ToNetCapabilities()) {
+	if n.Capabilities != nil && !md.Caps.CompatibleWith(n.Capabilities.ToNetCapabilities()) {
 		clog.Errorf(ctx, "Requested capabilities for segment are not compatible with this node taskId=%d url=%s err=%q", notify.TaskId, notify.Url, err)
 		return
 	}
