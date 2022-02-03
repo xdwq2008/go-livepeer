@@ -19,9 +19,7 @@ if [[ $ARCH == "x86_64" ]] && [[ $(uname) == "Darwin" ]] && [[ "${GOARCH:-}" == 
   EXTRA_LDFLAGS="$EXTRA_LDFLAGS --target=arm64-apple-macos11"
   HOST_OS="--host=aarch64-darwin"
   EXTRA_FFMPEG_FLAGS="$EXTRA_FFMPEG_FLAGS --arch=aarch64 --enable-cross-compile"
-else
-  echo $ARCH $(uname) "${GOARCH:-}"
-  exit 1
+  IS_M1=1
 fi
 echo "Arch $ARCH ${IS_M1:+(Apple Silicon)}"
 
