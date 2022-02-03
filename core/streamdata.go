@@ -42,7 +42,7 @@ type StreamParameters struct {
 	Detection        DetectionConfig
 	VerificationFreq uint
 	Nonce            uint64
-	Codec			 ffmpeg.VideoCodec
+	Codec            ffmpeg.VideoCodec
 }
 
 func (s *StreamParameters) StreamID() string {
