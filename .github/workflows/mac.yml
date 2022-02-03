@@ -6,8 +6,15 @@ on:
       - master
 jobs:
   build:
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - arm64
     runs-on: macOS-latest
     steps:
+    - name: Set build environment
+      run: echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
     - name: Checkout
       uses: actions/checkout@v2
       with:
