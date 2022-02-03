@@ -25,7 +25,7 @@ fi
 if [[ "$ARCH" == "aarch64" ]]; then
   ARCH="arm64"
 fi
-if [[ "$ARCH" != "amd64" ]] && [[ "$ARCH" != "arm64" ]];
+if [[ "$ARCH" != "amd64" ]] && [[ "$ARCH" != "arm64" ]]; then
   echo "Unknown/unsupported architecture: $ARCH"
   exit 1
 fi
