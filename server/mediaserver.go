@@ -840,22 +840,22 @@ func (s *LivepeerServer) HandlePush(w http.ResponseWriter, r *http.Request) {
 		ctx = clog.AddNonce(ctx, cxn.nonce)
 	}
 
-	isZeroFrame, _, vcodec_str, err := ffmpeg.GetCodecInfoBytes(body)
+	isZeroFrame, _, vcodecStr, err := ffmpeg.GetCodecInfoBytes(body)
 	if err != nil {
-		httpErr := fmt.Sprintf("Couldn't read stream data url=%s", r.URL)
+		httpErr := fmt.Sprintf("Error getting codec info url=%s", r.URL)
 		glog.Error(httpErr)
 		http.Error(w, httpErr, http.StatusUnprocessableEntity)
 		return
 	}
 
 	var vcodec *ffmpeg.VideoCodec = nil
-	if len(vcodec_str) == 0 {
+	if len(vcodecStr) == 0 {
 		glog.Warning("Couldn't detect input video stream codec")
 	} else {
-		vcodec_val, ok := ffmpeg.FfmpegNameToVideoCodec[vcodec_str]
+		vcodec_val, ok := ffmpeg.FfmpegNameToVideoCodec[vcodecStr]
 		vcodec = &vcodec_val
 		if !ok {
-			httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodec_str)
+			httpErr := fmt.Sprintf("Unknown input stream codec=%s", vcodecStr)
 			glog.Error(httpErr)
 			http.Error(w, httpErr, http.StatusUnprocessableEntity)
 			return
